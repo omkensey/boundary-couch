@@ -49,6 +49,7 @@ Note that these three instances, by design, are not accessible via SSH until aft
 
 ## Important notes
 
+* If things look a little scattershot organizationally, I can only -- SQUIRREL!
 * This demo architecture is *not production-ready*.  Do not use it in a production scenario and *DO NOT* store any sensitive information in it.  Treat it as completely disposable.  Most notably:
   * Nothing is TLS-enabled (except the Boundary-to-Boundary traffic that Boundary does this for automatically), to enable easily inspecting traffic flows should you wish to.
   * Vault is run in dev mode; if the Vault service is restarted after the environment is stood up, all Vault key data will be lost and you will need to manually reset (or just destroy and recreate).
@@ -69,6 +70,7 @@ Note that these three instances, by design, are not accessible via SSH until aft
   * Add options for AWS-native deps (KMS/RDS)
   * Preconfigure Vault and Postgres service units (Ignition config)
 * Improve Boundary component provisioning
+  * LB fronting controllers
   * Separate init and controller DB credentials
   * Preconfigure waiter/database init/controller/worker units (Ignition config)
   * Database init changes
