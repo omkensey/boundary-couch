@@ -1,0 +1,17 @@
+[Unit]
+Description=Postgres
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/postgres/postgres.env
+TimeoutStartSec=infinity
+TimeoutStopSec=5
+ExecStartPre=/bin/mkdir -p /etc/postgres/postgres-data
+ExecStartPre=-/usr/bin/docker rm postgres
+ExecStartPre=/usr/bin/docker pull postgres
+ExecStart=/usr/bin/docker run --name postgres -p 5432:5432 -v /etc/postgres/postgres-data:/var/lib/postgresql/data --env POSTGRES_PASSWORD="${POSTGRES_SUPER_PASSWORD}" --env POSTGRES_USER="boundaryinit" --env POSTGRES_DB="boundary-db" postgres:latest
+ExecStop=/usr/bin/docker stop postgres
+
+[Install]
+WantedBy=multi-user.target

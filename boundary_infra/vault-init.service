@@ -1,0 +1,24 @@
+[Unit]
+Description=Vault setup for Boundary
+Documentation=https://vaultproject.io/docs/
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/boundary/vault.env
+Type=oneshot
+RemainAfterExit=true
+TimeoutStartSec=infinity
+TimeoutStopSec=5
+ExecStartPre=/usr/bin/docker pull hashicorp/vault
+ExecStart=-/usr/bin/docker run --rm --env VAULT_ADDR=${VAULT_ADDR} --env VAULT_TOKEN=${VAULT_TOKEN} -p 8200:8200 hashicorp/vault secrets enable -path boundary transit
+ExecStartPost=-/usr/bin/docker run --rm --env VAULT_ADDR=${VAULT_ADDR} --env VAULT_TOKEN=${VAULT_TOKEN} -p 8200:8200 hashicorp/vault write -f boundary/keys/recovery
+ExecStartPost=-/usr/bin/docker run --rm --env VAULT_ADDR=${VAULT_ADDR} --env VAULT_TOKEN=${VAULT_TOKEN} -p 8200:8200 hashicorp/vault write -f boundary/keys/root
+ExecStartPost=-/usr/bin/docker run --rm --env VAULT_ADDR=${VAULT_ADDR} --env VAULT_TOKEN=${VAULT_TOKEN} -p 8200:8200 hashicorp/vault write -f boundary/keys/worker-auth
+ExecStartPost=/usr/bin/docker run --rm --env VAULT_ADDR=${VAULT_ADDR} --env VAULT_TOKEN=${VAULT_TOKEN} -p 8200:8200 hashicorp/vault read boundary/keys/recovery
+ExecStartPost=/usr/bin/docker run --rm --env VAULT_ADDR=${VAULT_ADDR} --env VAULT_TOKEN=${VAULT_TOKEN} -p 8200:8200 hashicorp/vault read boundary/keys/root
+ExecStartPost=/usr/bin/docker run --rm --env VAULT_ADDR=${VAULT_ADDR} --env VAULT_TOKEN=${VAULT_TOKEN} -p 8200:8200 hashicorp/vault read boundary/keys/worker-auth
+
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+path "boundary/encrypt/*" {
+   capabilities = [ "update" ]
+}
+path "boundary/decrypt/*" {
+   capabilities = [ "update" ]
+}

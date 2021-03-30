@@ -1,0 +1,19 @@
+[Unit]
+Description=Boundary database migrate
+Documentation=https://www.boundaryproject.io/docs/installing/no-gen-resources#initialize-the-database
+Requires=boundary-database-init.service
+After=boundary-database-init.service
+
+[Service]
+EnvironmentFile=/etc/boundary/boundary.env
+Type=oneshot
+RemainAfterExit=true
+TimeoutStartSec=infinity
+TimeoutStopSec=5
+RestartSec=5
+ExecStartPre=-/usr/bin/docker rm boundary-database-migrate
+ExecStartPre=/usr/bin/docker pull hashicorp/boundary:"${BOUNDARY_VERSION}"
+ExecStart=/usr/bin/docker run --name boundary-database-migrate -v /etc/boundary/boundary-database-init.hcl:/etc/boundary/boundary-database-init.hcl -p 9200:9200 -p 9201:9201 -p 9202:9202 --ulimit memlock=-1:-1 hashicorp/boundary:"${BOUNDARY_VERSION}" database migrate -config /etc/boundary/boundary-database-init.hcl
+
+[Install]
+WantedBy=multi-user.target

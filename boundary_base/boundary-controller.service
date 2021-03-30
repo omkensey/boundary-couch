@@ -1,0 +1,17 @@
+[Unit]
+Description=Boundary controller
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/etc/boundary/boundary.env
+TimeoutStartSec=infinity
+TimeoutStopSec=5
+RestartSec=5
+ExecStartPre=-/usr/bin/docker rm boundary-controller
+ExecStartPre=/usr/bin/docker pull hashicorp/boundary:"${BOUNDARY_VERSION}"
+ExecStart=/usr/bin/docker run --name boundary-controller -v /etc/boundary/boundary-controller.hcl:/etc/boundary/boundary-controller.hcl -p 9200:9200 -p 9201:9201 -p 9202:9202 --ulimit memlock=-1:-1 hashicorp/boundary:"${BOUNDARY_VERSION}" server -config /etc/boundary/boundary-controller.hcl
+ExecStop=/usr/bin/docker stop boundary-controller
+
+[Install]
+WantedBy=multi-user.target
