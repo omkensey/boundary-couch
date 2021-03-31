@@ -44,7 +44,7 @@ variable "aws_region" {
 
 variable "aws_instance_ami" {
   type = string
-  default = "ami-08b49e7d67e26d443"
+  default = "ami-09207b4b2c351fadc"
 }
 
 variable "aws_nodetype" {
