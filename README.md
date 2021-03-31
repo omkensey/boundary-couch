@@ -55,6 +55,7 @@ Note that these three instances, by design, are not accessible via SSH until aft
   * Vault is run in dev mode; if the Vault service is restarted after the environment is stood up, all Vault key data will be lost and you will need to manually reset (or just destroy and recreate).
   * Postgres data is stored in a directory on the utility server disk.
   * Vault tokens and Postgres credentials are not separated with minimal permissions for Boundary components as they should be in a properly-secure environment.
+  * Nothing but Vault runs as a non-root user inside the containers.
 * If you need to debug failures during standup, the following systemd units will be relevant:
   * Utility server: `vault`, `postgres`
   * Bootstrap server: `vault-init`, `boundary-database-init`, `boundary-database-migrate`
@@ -72,6 +73,7 @@ Note that these three instances, by design, are not accessible via SSH until aft
 * Improve Boundary component provisioning
   * LB fronting controllers
   * Separate init and controller DB credentials
+  * Run Postgres/Boundary containers as non-root users
   * Preconfigure waiter/database init/controller/worker units (Ignition config)
   * Database init changes
     * Skip automatic auth provisioning and replace with Terraform Boundary resources
